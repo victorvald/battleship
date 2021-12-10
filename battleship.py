@@ -873,3 +873,20 @@ if player1_winner == True:
     
 else:
     print(p2name + " Wins!")
+
+final_answer = input("View Boards? y or n: ").upper()
+final_answer_done= False
+while final_answer_done == False:
+    if final_answer == "Y":
+        print(p1name+"'s Board")
+        print_updated_board(board1, player1_board_list)
+        print(p2name+"'s Board")
+        print_updated_board(board2, player2_board_list)
+        final_quit = input("Press Enter to Quit")
+        final_answer_done = True
+    elif final_answer == "N":
+        final_answer = True
+        break
+    else:
+        print("Invalid Input Try Again")
+
