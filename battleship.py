@@ -4,7 +4,17 @@ boardX = {"A":1, "B":2, "C":3, "D":4, "E":5, "F":6, "G":7, "H":8, "I":9, "J":10}
 boardY = [1,2,3,4,5,6,7,8,9,10]
 board = ["A1","B1","C1","D1","E1","F1","G1","H1","I1","J1","A2","B2","C2","D2","E2","F2","G2","H2","I2","J2","A3","B3","C3","D3","E3","F3","G3","H3","I3","J3","A4","B4","C4","D4","E4","F4","G4","H4","I4","J4","A5","B5","C5","D5","E5","F5","G5","H5","I5","J5","A6","B6","C6","D6","E6","F6","G6","H6","I6","J6","A7","B7","C7","D7","E7","F7","G7","H7","I7","J7","A8","B8","C8","D8","E8","F8","G8","H8","I8","J8","A9","B9","C9","D9","E9","F9","G9","H9","I9","J9","A10","B10","C10","D10","E10","F10","G10","H10","I10","J10"]
 error_message = "Entry is not valid, try again"
+rules = """\
+Prepare for Battle:
+Secretly place your fleet of 5 ships on your grid. To place each ship choose grid location start and end grid location.  Locations must be adjacent to each other.
 
+How to Play:
+You and your opponent will alternate turns, typing out one shot per turn to try and hit each other's ships.
+
+Winning The Game:
+If you're the first player to sink your opponent's entire fleet of 5 ship, you win the game!
+
+"""
 initialboard = """\
 {A1}	{B1}	{C1}	{D1}	{E1}	{F1}	{G1}	{H1}	{I1}	{J1}
 {A2}	{B2}	{C2}	{D2}	{E2}	{F2}	{G2}	{H2}	{I2}	{J2}
@@ -609,8 +619,47 @@ def check_suken_ship(player, attack_choice):
                 ca_hit += 1
             if ca_hit == 5:
                 player.carrier_sunk = True
-                print("***You Sunk My Carrier***")
+                print("***You Sunk My Carrier!***")
                 break
+
+def ship_statues(player):
+    destroyer = ""
+    submarine = ""
+    cruiser = ""
+    battleship = ""
+    carrier = ""
+    if player.destroyer_sunk == True:
+        destroyer = "Sunk"
+    elif player.destroyer_sunk == False:
+        destroyer = "Alive"
+    if player.submarine_sunk == True:
+        submarine = "Sunk"
+    elif player.submarine_sunk == False:
+        submarine = "Alive"
+    if player.cruiser_sunk == True:
+        cruiser = "Sunk"
+    elif player.cruiser_sunk == False:
+        cruiser = "Alive"
+    if player.battleship_sunk == True:
+        battleship = "Sunk"
+    elif player.battleship_sunk == False:
+        battleship = "Alive"
+    if player.carrier_sunk == True:
+        carrier = "Sunk"
+    elif player.carrier_sunk == False:
+        carrier = "Alive"
+    
+    statements = """\
+Enemy Ship Statues:
+Destroyer: {des}
+Submarine: {sub}
+Cruiser: {cr}
+Battleship: {ba}
+Carrier: {ca}
+        """.format(des=destroyer, sub=submarine, cr=cruiser, ba=battleship, ca=carrier)
+    print(statements)
+    
+
 
 def check_winner(player):
     if player.destroyer_sunk == True and player.submarine_sunk == True and player.cruiser_sunk == True and player.battleship_sunk == True and player.carrier_sunk == True:
@@ -624,6 +673,14 @@ def check_winner(player):
 
 #### GAME START####
 print(word_battleship)
+start_game = False
+while start_game == False:
+    start_input = input("type s to start game or type i for Instructions: ").upper()
+    if start_input == "I":
+        print(rules)
+    elif start_input == "S":
+        start_game = True
+os.system('cls')
 player_1_name = input("Input Player 1 Name: ")
 player_2_name = input("Input Player 2 Name: ")
 
@@ -732,6 +789,8 @@ while ready == False:
         os.system('cls')
 
 ############### GAME START ###############
+p1name = player1.name
+p2name = player2.name
 player1_game_board = player2.board_playing_game
 player2_game_board = player1.board_playing_game
 player1_attack_choice = []
@@ -749,7 +808,8 @@ while game_complete == False:
         player2_turn = True
         print("-------------------------------------------------------------------------")
         print_updated_board(board2, player1_game_board)
-        print("Player One's Turn")
+        ship_statues(player2)
+        print(p1name+ "'s Turn")
         grid_choice1 = input("Pick Tile to Attack: ").upper()
         if grid_choice1 in board:
             if grid_choice1 not in player1_attack_choice:
@@ -769,18 +829,18 @@ while game_complete == False:
         else:
             print("Invalid Entry, Try Again")
         
-        check_suken_ship(player2, player1_attack_choice)
-        player1_winner = check_winner(player2)
-        if player1_winner == True:
-            game_complete = True
-            break
+    check_suken_ship(player2, player1_attack_choice)
+    player1_winner = check_winner(player2)
+    if player1_winner == True:
+        game_complete = True
+        break
         
-
     while player2_turn == True:
         player1_turn = True
         print("-------------------------------------------------------------------------")
         print_updated_board(board1, player2_game_board)
-        print("Player Two's Turn")
+        ship_statues(player1)
+        print(p2name+"'s Turn")
         grid_choice2 = input("Pick Tile to Attack: ").upper()
         if grid_choice2 in board:
             if grid_choice2 not in player2_attack_choice:
@@ -800,16 +860,16 @@ while game_complete == False:
         else:
             print("Invalid Entry, Try Again")
         
-        check_suken_ship(player1, player2_attack_choice)
-        player2_winner = check_winner(player1)
-        if player2_winner == True:
-            game_complete = True
-            break
+    check_suken_ship(player1, player2_attack_choice)
+    player2_winner = check_winner(player1)
+    if player2_winner == True:
+        game_complete = True
+        break
         
 
 ######## END GAME ########
 if player1_winner == True:
-    print("Player 1 Wins!")
+    print(p1name + " Wins!")
     
-else: 
-    print("Player 2 Wins!")
+else:
+    print(p2name + " Wins!")
